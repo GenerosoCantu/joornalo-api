@@ -1,21 +1,21 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Story } from './interfaces/Stories.interface'
+import { Front } from './interfaces/fronts.interface'
 import { createJsonFile } from '../utils/file-json.utils';
 import { CoversModule } from 'src/covers/covers.module';
 // import * as fs from 'fs';
 
 @Injectable()
-export class StoriesService {
+export class FrontsService {
   constructor(
-    @InjectModel('Story') private readonly storyModel: Model<Story>
+    @InjectModel('Front') private readonly frontModel: Model<Front>
   ) { }
 
   async findAll(page: number = 0, limit: number = 10, section, status, sortBy = 'date', sortOrder = '-1', date = null): Promise<any> {
     // title search index TBD
-    // return await this.storyModel.find();
-    // http://localhost:4000/story/?page=0&limit=5&section=international&status=Pending&sortBy=date&sortOrder=-1&date=12/1/2021
+    // return await this.frontModel.find();
+    // http://localhost:4000/front/?page=0&limit=5&section=international&status=Pending&sortBy=date&sortOrder=-1&date=12/1/2021
 
     const match = {
       ...(section && { section }),
@@ -25,7 +25,7 @@ export class StoriesService {
 
     const skip = page * limit
 
-    const response = await this.storyModel.aggregate([
+    const response = await this.frontModel.aggregate([
       { $match: match },
       { '$sort': { 'date': sortOrder === '1' ? 1 : -1 } },
       {
@@ -50,30 +50,30 @@ export class StoriesService {
     }
   }
 
-  async findOne(id: string): Promise<Story> {
+  async findOne(id: string): Promise<Front> {
     console.log('findOne:', id);
-    return await this.storyModel.findOne({ _id: id });
+    return await this.frontModel.findOne({ _id: id });
   }
 
-  // async findStory(email: string): Promise<Story> {
-  //   return await this.storyModel.findOne({ email: email });
+  // async findFront(email: string): Promise<Front> {
+  //   return await this.frontModel.findOne({ email: email });
   // }
 
-  async create(story: Story): Promise<Story> {
-    const newStory = new this.storyModel(story);
-    createJsonFile('data/story/', newStory['_id'], newStory);
-    return await newStory.save();
+  async create(front: Front): Promise<Front> {
+    const newFront = new this.frontModel(front);
+    createJsonFile('data/front/', newFront['_id'], newFront);
+    return await newFront.save();
   }
 
-  async update(id: string, story: Story): Promise<Story> {
-    // createJsonFile('data/story/', story['_id'], story);
-    console.log('story--------------------------')
-    console.log(story)
-    return await this.storyModel.findByIdAndUpdate(id, story, { new: true });
+  async update(id: string, front: Front): Promise<Front> {
+    // createJsonFile('data/front/', front['_id'], front);
+    console.log('front--------------------------')
+    console.log(front)
+    return await this.frontModel.findByIdAndUpdate(id, front, { new: true });
   }
 
-  async delete(id: string): Promise<Story> {
-    return await this.storyModel.findByIdAndRemove(id);
+  async delete(id: string): Promise<Front> {
+    return await this.frontModel.findByIdAndRemove(id);
   }
 
 }
