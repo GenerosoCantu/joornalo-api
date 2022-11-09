@@ -20,31 +20,9 @@ export class FrontDto {
   @ApiProperty()
   readonly section: string;
 
-  @IsString()
-  @ApiProperty()
-  readonly subsection: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  readonly title: string;
-
-  @IsString()
-  @ApiProperty()
-  readonly desc: string;
-
-  @IsString()
-  @ApiProperty()
-  readonly text: string;
-
-  @ApiProperty()
-  readonly images: string[];
-
-  @ApiProperty()
-  readonly embed: string[];
-
-  @ApiProperty()
-  readonly quotes: string[];
+  // @IsString()
+  // @ApiProperty()
+  // readonly cover: string;
 
   toJSON() {
     return classToPlain(this);

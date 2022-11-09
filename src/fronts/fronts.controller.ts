@@ -4,7 +4,7 @@ import { FrontDto } from './dto/fronts.dto';
 import { FrontsService } from './fronts.service';
 import { Front } from './interfaces/fronts.interface';
 
-@Controller('Fronts')
+@Controller('fronts')
 export class FrontsController {
   constructor(private readonly FrontsService: FrontsService) { }
 
