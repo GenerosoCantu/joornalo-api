@@ -2,6 +2,9 @@
 /dist
 /node_modules
 
+#Test Data
+/data
+
 # Logs
 logs
 *.log
