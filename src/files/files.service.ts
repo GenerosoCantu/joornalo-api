@@ -9,17 +9,26 @@ import * as fs from 'fs';
 export class FilesService {
   constructor() { }
 
-  async uploadFile(file) {
-    console.log('filename: ', file[0]);
-    console.log('filename: ', file[0].filename);
-    fs.rename('data/tmp/' + file[0].filename, 'data/b/' + file[0].originalname, (err) => {
-      if (err) throw err;
-      fs.unlink('data/tmp/' + file[0].filename, (err) => {
-        // if (err) throw err;
-        console.log('originalname: ', file[0].originalname);
-        console.log('Download complete!');
-        return { file: file[0].originalname };
-      });
+  // async uploadFile(file) {
+  //   console.log('filename: ', file[0]);
+  //   console.log('filename: ', file[0].filename);
+  //   fs.rename('data/tmp/' + file[0].filename, 'data/b/' + file[0].originalname, (err) => {
+  //     if (err) throw err;
+  //     fs.unlink('data/tmp/' + file[0].filename, (err) => {
+  //       // if (err) throw err;
+  //       console.log('originalname: ', file[0].originalname);
+  //       console.log('Download complete!');
+  //       return { file: file[0].originalname };
+  //     });
+  //   });
+  // }
+
+  async deleteFile(fileName) {
+    fs.unlink(fileName, (err) => {
+      if (err) {
+        throw err;
+      }
+      console.log("Delete File successfully...", fileName);
     });
   }
 

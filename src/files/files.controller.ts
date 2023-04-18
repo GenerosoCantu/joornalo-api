@@ -4,6 +4,7 @@ import { ValidationPipe, ParseUUIDPipe, UploadedFile, UseInterceptors, UploadedF
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { imageFileFilter } from '../utils/file-upload.utils';
 import { diskStorage } from 'multer';
+const fs = require('fs');
 
 @Controller('files')
 export class FilesController {
@@ -11,7 +12,7 @@ export class FilesController {
     private readonly filesService: FilesService
   ) { }
 
-  // @Post('uploadx')
+  // @Post('upload')
   // @UseInterceptors(FilesInterceptor('file', 1, { dest: './data/tmp' }))
   // async uploadFile(@UploadedFiles() file, @Body() body) {
   //   console.log(body.name);
@@ -25,6 +26,9 @@ export class FilesController {
       storage: diskStorage({
         destination: './data/tmp',
         filename: (req, file, cb) => {
+          // console.log('req==>', req)
+          // console.log('file==>', file)
+          // console.log('cb==>', cb)
           const extension = file.originalname.split('.').pop();
           // [fieldName]-[date].[ext]
           cb(null, `${file.fieldname}-${Date.now()}.${extension}`);
@@ -34,12 +38,16 @@ export class FilesController {
     }),
   )
   async uploadedFile(@UploadedFile() file) {
-    console.log(file);
+    // console.log('uploadedFile----------------------------');
+    // console.log(file);
+    if (file.originalname !== 'tmpImage.jpeg') {
+      this.filesService.deleteFile('data/tmp/' + file.originalname);
+    }
     const response = {
       originalname: file.originalname,
       filename: file.filename,
+      src: `http://localhost:5000/tmp/${file.filename}`
     };
     return response;
   }
-
 }
