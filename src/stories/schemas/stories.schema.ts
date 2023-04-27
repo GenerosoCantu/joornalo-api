@@ -22,7 +22,13 @@ export const StorySchema = new mongoose.Schema({
   title: String,
   desc: String,
   text: String,
-  images: [String],
+  images: [
+    {
+      filename: String,
+      ratio: String,
+      label: String
+    }
+  ],
   embeded: [String],
   quotes: [String]
 }, {

@@ -1,3 +1,8 @@
+export class Images {
+  filename: String;
+  ratio: String;
+  label: String;
+}
 export class Story {
   _id?: string;
   date?: Date;
@@ -7,7 +12,7 @@ export class Story {
   title: string;
   desc: string;
   text: string;
-  images?: string[];
+  images?: Images[];
   embed?: string[];
   quotes?: string[];
 }

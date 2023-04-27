@@ -40,7 +40,7 @@ export class FilesController {
   async uploadedFile(@UploadedFile() file) {
     // console.log('uploadedFile----------------------------');
     // console.log(file);
-    if (file.originalname !== 'tmpImage.jpeg') {
+    if (file.originalname !== 'tmpImage.webp') {
       this.filesService.deleteFile('data/tmp/' + file.originalname);
     }
     const response = {
@@ -50,4 +50,10 @@ export class FilesController {
     };
     return response;
   }
+
+  @Delete(':id')
+  delete(@Param('id') id): Promise<any> {
+    return this.filesService.deleteFile('data/tmp/' + id);
+  }
+
 }

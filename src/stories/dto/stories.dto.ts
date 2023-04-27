@@ -3,6 +3,21 @@ import { IsString, IsInt, IsNotEmpty, IsBoolean } from 'class-validator';
 import { Exclude } from 'class-transformer';
 import { classToPlain } from 'class-transformer';
 
+export class ImagesDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  readonly filename: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  readonly ratio: string;
+
+  @IsString()
+  @ApiProperty()
+  readonly label: string;
+}
 export class StoryDto {
 
   // @IsString()
@@ -38,7 +53,7 @@ export class StoryDto {
   readonly text: string;
 
   @ApiProperty()
-  readonly images: string[];
+  readonly images: ImagesDto[];
 
   @ApiProperty()
   readonly embed: string[];

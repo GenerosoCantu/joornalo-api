@@ -29,6 +29,7 @@ export class FilesService {
         throw err;
       }
       console.log("Delete File successfully...", fileName);
+      return {};
     });
   }
 
