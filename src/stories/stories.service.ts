@@ -2,9 +2,8 @@ import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Story } from './interfaces/Stories.interface'
-import { createJsonFile } from '../utils/file-json.utils';
+import { createJsonFile, moveImages } from '../utils/file-json.utils';
 import { CoversModule } from 'src/covers/covers.module';
-// import * as fs from 'fs';
 
 @Injectable()
 export class StoriesService {
@@ -66,9 +65,10 @@ export class StoriesService {
   }
 
   async update(id: string, story: Story): Promise<Story> {
-    // createJsonFile('data/story/', story['_id'], story);
-    console.log('story--------------------------')
-    console.log(story)
+    const oldStory = await this.storyModel.findOne({ _id: id });
+    console.log('story--------------------------', story._id)
+    await createJsonFile('data/story/', story['_id'], story);
+    await moveImages(id, oldStory['images'], story['images']);
     return await this.storyModel.findByIdAndUpdate(id, story, { new: true });
   }
 

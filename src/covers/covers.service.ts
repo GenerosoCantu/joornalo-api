@@ -46,7 +46,7 @@ export class CoversService {
   async create(cover: Cover): Promise<Cover> {
     const newCover = new this.coverModel(cover);
     fs.writeFile('data/a/' + newCover['_id'] + '.json', JSON.stringify(cover), function (err) {
-      if (err) throw err;
+      if (err) console.log(err);
     });
     return await newCover.save();
   }

@@ -13,9 +13,9 @@ export class FilesService {
   //   console.log('filename: ', file[0]);
   //   console.log('filename: ', file[0].filename);
   //   fs.rename('data/tmp/' + file[0].filename, 'data/b/' + file[0].originalname, (err) => {
-  //     if (err) throw err;
+  //     if (err) console.log(err);
   //     fs.unlink('data/tmp/' + file[0].filename, (err) => {
-  //       // if (err) throw err;
+  //       // if (err) console.log(err);
   //       console.log('originalname: ', file[0].originalname);
   //       console.log('Download complete!');
   //       return { file: file[0].originalname };
@@ -26,11 +26,31 @@ export class FilesService {
   async deleteFile(fileName) {
     fs.unlink(fileName, (err) => {
       if (err) {
-        throw err;
+        console.log(err);
       }
       console.log("Delete File successfully...", fileName);
       return {};
     });
   }
+
+  // async moveFile(oldPath, newPath) {
+  //   fs.rename(oldPath, newPath, (err) => {
+  //     if (err) {
+  //       console.log(err);
+  //     }
+  //     console.log("File successfully moved...", newPath);
+  //     return {};
+  //   });
+  // }
+
+  // async moveTmpImages(id, images) {
+  //   console.log('id:', id)
+  //   console.log('images:', images)
+  //   // const folders = id.split('');
+  //   // const path = '' + folders[0] + '/' + folders[1] + '/'
+  //   // console.log('path:', path)
+  //   // console.log('images:', images)
+
+  // }
 
 }
