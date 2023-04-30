@@ -2,8 +2,8 @@ import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Story } from './interfaces/Stories.interface'
-import { createJsonFile, moveImages } from '../utils/file-json.utils';
-import { CoversModule } from 'src/covers/covers.module';
+import { createFolders, deleteFile, writeJsonFile, moveImages } from '../utils/file-json.utils';
+// import { CoversModule } from 'src/covers/covers.module';
 
 @Injectable()
 export class StoriesService {
@@ -58,17 +58,33 @@ export class StoriesService {
   //   return await this.storyModel.findOne({ email: email });
   // }
 
+  // async create(story: Story): Promise<Story> {
+  //   const newStory = new this.storyModel(story);
+  //   createJsonFile('data/story/', newStory['_id'], newStory);
+  //   return await newStory.save();
+  // }
+
   async create(story: Story): Promise<Story> {
     const newStory = new this.storyModel(story);
-    createJsonFile('data/story/', newStory['_id'], newStory);
+    const path = await createFolders('data/story/', newStory['_id'])
+    if (story.status === 'Active') {
+      await writeJsonFile(path, 'story', newStory);
+    }
+    await moveImages(path, [], story['images']);
     return await newStory.save();
   }
 
   async update(id: string, story: Story): Promise<Story> {
     const oldStory = await this.storyModel.findOne({ _id: id });
     console.log('story--------------------------', story._id)
-    await createJsonFile('data/story/', story['_id'], story);
-    await moveImages(id, oldStory['images'], story['images']);
+    const path = await createFolders('data/story/', id)
+    if (story.status === 'Active') {
+      await writeJsonFile(path, 'story', story);
+    } else {
+      await deleteFile(path + 'story.json')
+    }
+
+    await moveImages(path, oldStory['images'], story['images']);
     return await this.storyModel.findByIdAndUpdate(id, story, { new: true });
   }
 
