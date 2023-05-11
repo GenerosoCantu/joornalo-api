@@ -61,6 +61,7 @@ export class FrontsService {
 
   async create(front: Front): Promise<Front> {
     const newFront = new this.frontModel(front);
+    // replace with writeJsonFile
     createJsonFile('data/front/', newFront['_id'], newFront);
     return await newFront.save();
   }

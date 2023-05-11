@@ -50,41 +50,28 @@ export class StoriesService {
   }
 
   async findOne(id: string): Promise<Story> {
-    console.log('findOne:', id);
     return await this.storyModel.findOne({ _id: id });
   }
-
-  // async findStory(email: string): Promise<Story> {
-  //   return await this.storyModel.findOne({ email: email });
-  // }
-
-  // async create(story: Story): Promise<Story> {
-  //   const newStory = new this.storyModel(story);
-  //   createJsonFile('data/story/', newStory['_id'], newStory);
-  //   return await newStory.save();
-  // }
 
   async create(story: Story): Promise<Story> {
     const newStory = new this.storyModel(story);
     const path = await createFolders('data/story/', newStory['_id'])
     if (story.status === 'Active') {
-      await writeJsonFile(path, 'story', newStory);
+      writeJsonFile(path, 'story', newStory);
     }
-    await moveImages(path, [], story['images']);
-    return await newStory.save();
+    moveImages(path, [], story['images']);
+    return newStory.save();
   }
 
   async update(id: string, story: Story): Promise<Story> {
     const oldStory = await this.storyModel.findOne({ _id: id });
-    console.log('story--------------------------', story._id)
     const path = await createFolders('data/story/', id)
     if (story.status === 'Active') {
-      await writeJsonFile(path, 'story', story);
+      writeJsonFile(path, 'story', story);
     } else {
-      await deleteFile(path + 'story.json')
+      deleteFile(path + 'story.json')
     }
-
-    await moveImages(path, oldStory['images'], story['images']);
+    moveImages(path, oldStory['images'], story['images']);
     return await this.storyModel.findByIdAndUpdate(id, story, { new: true });
   }
 
