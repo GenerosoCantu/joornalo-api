@@ -20,6 +20,37 @@ export const createFolders = async (basePath, uuid) => {
   return newPath;
 }
 
+export const deleteFolders = async (basePath, uuid) => {
+  const folders = uuid.substr(0, 3).split('');
+  folders.push(uuid);
+  let currPath = basePath;
+  folders.forEach((folder) => {
+    currPath = currPath + folder + '/';
+  })
+
+  const revFolders = folders.reverse();
+
+  revFolders.forEach((folder) => {
+    try {
+      const filesOnDir = fs.readdirSync(currPath);
+      // console.log('deleteFolder:', currPath);
+      // console.log('filesOnDir:', filesOnDir);
+      if (filesOnDir.length === 0) {
+        try {
+          // console.log('rmdirSync:', currPath);
+          fs.rmdirSync(currPath);
+          currPath = currPath.replace('/' + folder, '')
+        } catch (err) {
+          return console.error('Fail to delete Dir: ', currPath, err);
+        }
+      }
+    } catch (err) {
+      return console.error(err);
+    }
+  })
+  return;
+}
+
 // Depracated
 export const createJsonFile = async (path, fileName, obj) => {
   const folders = fileName.split('');
@@ -70,14 +101,15 @@ const moveFile = async (oldPath, newPath) => {
 }
 
 export const deleteFile = async (fileName) => {
-  console.log('deleteImage:', fileName);
-  fs.unlink(fileName, (err) => {
-    if (err) {
-      console.log(err);
-    }
+  console.log('deleteFile:', fileName);
+
+  try {
+    fs.unlinkSync(fileName);
     console.log("Delete File successfully...", fileName);
-    return {};
-  });
+  } catch (err) {
+    return console.error('Fail to delete file: ', fileName, err);
+  }
+
 }
 
 export const moveImages = async (path, oldImages, newImages) => {

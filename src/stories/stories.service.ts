@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Story } from './interfaces/Stories.interface'
-import { createFolders, deleteFile, writeJsonFile, moveImages } from '../utils/file-json.utils';
+import { createFolders, deleteFile, writeJsonFile, moveImages, deleteFolders } from '../utils/file-json.utils';
 // import { CoversModule } from 'src/covers/covers.module';
 
 @Injectable()
@@ -76,6 +76,11 @@ export class StoriesService {
   }
 
   async delete(id: string): Promise<Story> {
+    const story = await this.storyModel.findOne({ _id: id });
+    const path = await createFolders('data/story/', id)
+    await deleteFile(path + 'story.json')
+    await moveImages(path, story['images'], []);
+    await deleteFolders('data/story/', id)
     return await this.storyModel.findByIdAndRemove(id);
   }
 
