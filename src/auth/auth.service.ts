@@ -16,7 +16,7 @@ export class AuthService {
     if (user && user.password === pass && !user.locked) {
       return user;
     }
-    if (user.locked) {
+    if (user?.locked) {
       return 403;
     }
 
@@ -30,8 +30,7 @@ export class AuthService {
   }
 
   async login(user: any) {
-    console.log('user::::::::::::');
-    console.log(user);
+    console.log('login user::::::::::::', user);
     const payload = { email: user.email, sub: user['_id'] };
     let token = this.jwtService.sign(payload);
     this.sessions[user.email] = token;
@@ -42,14 +41,13 @@ export class AuthService {
   }
 
   async validateSession(token: any) {
-    for (let [email, validToken] of Object.entries(this.sessions)) {
-      console.log(`${email}: ${validToken}`);
-      if (validToken == token) {
-        return true;
-      }
-      return false;
-    }
-    //return (this.sessions[email] = token);
+    console.log(`sessions: `, this.sessions);
+    const { email } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString())
+    // console.log(`email: `, email);
+    // console.log(`token: `, token);
+    // console.log(`sessionToken: `, this.sessions[email]);
+    console.log(`valid session::::`, this.sessions[email] === token);
+    return (this.sessions[email] === token)
   }
 
   private buildUser(user: any) {

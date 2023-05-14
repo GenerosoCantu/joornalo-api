@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import config from '../config/keys'
 import { AuthService } from './auth.service';
 
@@ -11,14 +11,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: config.secret,
+      passReqToCallback: true
     });
   }
 
-  async validate(payload: any) {
+  async validate(request: Request, payload: any) {
     console.log('JwtStrategy validate ******************************');
-    console.log(payload);
-    const valid = await this.authService.validateSession('okokok');
-    //console.log(ExtractJwt.fromAuthHeaderAsBearerToken);
+    const Headers = JSON.parse(JSON.stringify(request.headers));
+    const Token = Headers.authorization.replace('Bearer ', '')
+    const valid = await this.authService.validateSession(Token);
+    if (!valid) {
+      console.log('403....');
+      throw new ForbiddenException();
+    }
     return { userId: payload.sub, email: payload.email };
   }
 }
