@@ -29,7 +29,7 @@ export class FilesService {
         console.log(err);
       }
       console.log("Delete File successfully...", fileName);
-      return {};
+      return;
     });
   }
 

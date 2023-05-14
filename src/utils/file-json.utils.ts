@@ -96,7 +96,7 @@ const moveFile = async (oldPath, newPath) => {
       console.log(err);
     }
     console.log("File successfully moved...", newPath);
-    return {};
+    return;
   });
 }
 

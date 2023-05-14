@@ -1,6 +1,8 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { HttpService } from '@nestjs/axios'
+import { catchError, firstValueFrom } from 'rxjs';
 import { Story } from './interfaces/Stories.interface'
 import { createFolders, deleteFile, writeJsonFile, moveImages, deleteFolders } from '../utils/file-json.utils';
 // import { CoversModule } from 'src/covers/covers.module';
@@ -8,6 +10,7 @@ import { createFolders, deleteFile, writeJsonFile, moveImages, deleteFolders } f
 @Injectable()
 export class StoriesService {
   constructor(
+    private readonly httpService: HttpService,
     @InjectModel('Story') private readonly storyModel: Model<Story>
   ) { }
 
@@ -64,14 +67,44 @@ export class StoriesService {
   }
 
   async update(id: string, story: Story): Promise<Story> {
+    console.log('update----id:', id);
     const oldStory = await this.storyModel.findOne({ _id: id });
     const path = await createFolders('data/story/', id)
     if (story.status === 'Active') {
-      writeJsonFile(path, 'story', story);
+      const { status } = await firstValueFrom(
+        this.httpService.patch('http://localhost:4100/files/json', { path, fileName: 'story', obj: story }).pipe(
+          catchError((error) => {
+            console.log(error.response.data);
+            throw 'An error happened!';
+          }),
+        )
+      );
+      console.log('writeJsonFile status:::', status);
+      // writeJsonFile(path, 'story', story);
     } else {
-      deleteFile(path + 'story.json')
+      const { status } = await firstValueFrom(
+        this.httpService.delete('http://localhost:4100/files', { data: { fileName: `${path}story.json` } }).pipe(
+          catchError((error) => {
+            console.log(error.response.data);
+            throw 'An error happened!';
+          }),
+        )
+      );
+      console.log('deleteFile status:::', status);
+      // deleteFile(path + 'story.json')
     }
-    moveImages(path, oldStory['images'], story['images']);
+    // @PATCH http://localhost:4100/files/moveimages
+    const { status } = await firstValueFrom(
+      this.httpService.patch('http://localhost:4100/files/moveimages', { path, oldImages: oldStory['images'], newImages: story['images'] }).pipe(
+        catchError((error) => {
+          console.log(error.response.data);
+          throw 'An error happened!';
+        }),
+      )
+    );
+    console.log('moveImages status:::', status);
+    // moveImages(path, oldStory['images'], story['images']);
+
     return await this.storyModel.findByIdAndUpdate(id, story, { new: true });
   }
 

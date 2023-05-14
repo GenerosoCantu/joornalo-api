@@ -51,7 +51,7 @@ export class FilesController {
     return response;
   }
 
-  @Delete(':id')
+  @Delete('tmp/:id')
   delete(@Param('id') id): Promise<any> {
     return this.filesService.deleteFile('data/tmp/' + id);
   }

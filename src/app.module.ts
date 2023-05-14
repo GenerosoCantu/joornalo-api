@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { HttpModule } from '@nestjs/axios'
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -17,6 +18,7 @@ import config from './config/keys'
 @Module({
   imports: [
     MongooseModule.forRoot(config.mongoURI),
+    HttpModule,
     AuthModule,
     CoversModule,
     FilesModule,
