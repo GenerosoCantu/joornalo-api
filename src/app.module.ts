@@ -17,7 +17,7 @@ import config from './config/keys'
 
 @Module({
   imports: [
-    MongooseModule.forRoot(config.mongoURI),
+    MongooseModule.forRoot(config.MONGO_URI),
     HttpModule,
     AuthModule,
     CoversModule,
