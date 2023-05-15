@@ -7,6 +7,11 @@ export const imageFileFilter = (req, file, callback) => {
   callback(null, true);
 };
 
+export const getToken = async (headers) => {
+  const Headers = JSON.parse(JSON.stringify(headers));
+  return Headers.authorization?.replace('Bearer ', '')
+};
+
 
 // just for testing...to be deleted
 export const editFileName = (req, file, callback) => {

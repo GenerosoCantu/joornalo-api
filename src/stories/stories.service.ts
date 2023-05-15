@@ -66,13 +66,22 @@ export class StoriesService {
     return newStory.save();
   }
 
-  async update(id: string, story: Story): Promise<Story> {
+  async update(id: string, story: Story, token: any): Promise<Story> {
     console.log('update----id:', id);
     const oldStory = await this.storyModel.findOne({ _id: id });
     const path = await createFolders('data/story/', id)
+
+    const axiosConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      }
+    }
+
+    console.log('Headers::::', axiosConfig)
     if (story.status === 'Active') {
       const { status } = await firstValueFrom(
-        this.httpService.patch('http://localhost:4100/files/json', { path, fileName: 'story', obj: story }).pipe(
+        this.httpService.patch('http://localhost:4100/files/json', { path, fileName: 'story', obj: story }, axiosConfig).pipe(
           catchError((error) => {
             console.log(error.response.data);
             throw 'An error happened!';
@@ -82,8 +91,9 @@ export class StoriesService {
       console.log('writeJsonFile status:::', status);
       // writeJsonFile(path, 'story', story);
     } else {
+      const axiosConfigData = Object.assign(axiosConfig, { data: { fileName: `${path}story.json` } })
       const { status } = await firstValueFrom(
-        this.httpService.delete('http://localhost:4100/files', { data: { fileName: `${path}story.json` } }).pipe(
+        this.httpService.delete('http://localhost:4100/files', axiosConfigData).pipe(
           catchError((error) => {
             console.log(error.response.data);
             throw 'An error happened!';
@@ -95,7 +105,7 @@ export class StoriesService {
     }
     // @PATCH http://localhost:4100/files/moveimages
     const { status } = await firstValueFrom(
-      this.httpService.patch('http://localhost:4100/files/moveimages', { path, oldImages: oldStory['images'], newImages: story['images'] }).pipe(
+      this.httpService.patch('http://localhost:4100/files/moveimages', { path, oldImages: oldStory['images'], newImages: story['images'] }, axiosConfig).pipe(
         catchError((error) => {
           console.log(error.response.data);
           throw 'An error happened!';

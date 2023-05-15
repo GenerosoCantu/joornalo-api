@@ -5,16 +5,23 @@ import { AuthService } from '../auth/auth.service';
 // import { ItemsService } from './items.service';
 // import { Item } from './interfaces/item.interface';
 
-@Controller('login')
+@Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
   ) { }
 
   @UseGuards(AuthGuard('local'))
-  @Post()
+  @Post('/login')
   async login(@Request() req) {
     return this.authService.login(req.user);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/validate')
+  async valid() {
+    console.log('Valid Token------------------------------')
+    return;
   }
 
 }

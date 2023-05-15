@@ -1,8 +1,9 @@
-import { Controller, Request, Get, Post, Put, Patch, Delete, Body, Param, Header, UseGuards, Query, UseInterceptors } from '@nestjs/common';
+import { Controller, Request, Get, Post, Put, Patch, Delete, Body, Param, Header, UseGuards, Query, UseInterceptors, Req } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { StoryDto } from './dto/stories.dto';
 import { StoriesService } from './stories.service';
 import { Story } from './interfaces/stories.interface';
+import { getToken } from '../utils/file-upload.utils';
 
 @Controller('stories')
 export class StoriesController {
@@ -29,8 +30,9 @@ export class StoriesController {
 
   @UseGuards(AuthGuard('jwt'))
   @Patch('/:id')
-  updateStory(@Body() updateStoryDto: StoryDto, @Param('id') id): Promise<Story> {
-    return this.storiesService.update(id, updateStoryDto);
+  async updateStory(@Req() request: Request, @Body() updateStoryDto: StoryDto, @Param('id') id): Promise<Story> {
+    const Token = await getToken(request.headers);
+    return this.storiesService.update(id, updateStoryDto, Token);
   }
 
   @Delete(':id')
