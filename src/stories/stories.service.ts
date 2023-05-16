@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { HttpService } from '@nestjs/axios'
 import { catchError, firstValueFrom } from 'rxjs';
-import config from '../config/keys'
-import { Story } from './interfaces/Stories.interface'
+import config from '../config/keys';
+import { Story } from './interfaces/stories.interface';
 import { createFolders, deleteFile, writeJsonFile, moveImages, deleteFolders } from '../utils/file-json.utils';
 // import { CoversModule } from 'src/covers/covers.module';
 
