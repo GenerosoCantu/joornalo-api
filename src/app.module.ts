@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { HttpModule } from '@nestjs/axios'
 import { AppController } from './app.controller';
@@ -13,11 +14,10 @@ import { SectionsModule } from './sections/sections.module';
 import { StoriesModule } from './stories/stories.module';
 import { UsersModule } from './users/users.module';
 
-import config from './config/keys'
-
 @Module({
   imports: [
-    MongooseModule.forRoot(config.MONGO_URI),
+    ConfigModule.forRoot({ isGlobal: true }),
+    MongooseModule.forRoot(process.env.MONGO_URI),
     HttpModule,
     AuthModule,
     CoversModule,

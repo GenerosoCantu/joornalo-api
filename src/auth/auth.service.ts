@@ -30,7 +30,6 @@ export class AuthService {
   }
 
   async login(user: any) {
-    console.log('login user::::::::::::', user);
     const payload = { email: user.email, sub: user['_id'] };
     let token = this.jwtService.sign(payload);
     this.sessions[user.email] = token;

@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { HttpService } from '@nestjs/axios'
 import { catchError, firstValueFrom } from 'rxjs';
-import config from '../config/keys';
 import { Story } from './interfaces/stories.interface';
 import { createFolders, deleteFile, writeJsonFile, moveImages, deleteFolders } from '../utils/file-json.utils';
 // import { CoversModule } from 'src/covers/covers.module';
@@ -82,7 +81,7 @@ export class StoriesService {
     console.log('Headers::::', axiosConfig)
     if (story.status === 'Active') {
       const { status } = await firstValueFrom(
-        this.httpService.patch(`${config.JOORNALO_CDN_API_URL}files/json`, { path, fileName: 'story', obj: story }, axiosConfig).pipe(
+        this.httpService.patch(`${process.env.JOORNALO_CDN_API_URL}files/json`, { path, fileName: 'story', obj: story }, axiosConfig).pipe(
           catchError((error) => {
             console.log(error.response.data);
             throw 'An error happened!';
@@ -94,7 +93,7 @@ export class StoriesService {
     } else {
       const axiosConfigData = Object.assign(axiosConfig, { data: { fileName: `${path}story.json` } })
       const { status } = await firstValueFrom(
-        this.httpService.delete(`${config.JOORNALO_CDN_API_URL}files`, axiosConfigData).pipe(
+        this.httpService.delete(`${process.env.JOORNALO_CDN_API_URL}files`, axiosConfigData).pipe(
           catchError((error) => {
             console.log(error.response.data);
             throw 'An error happened!';
@@ -106,7 +105,7 @@ export class StoriesService {
     }
 
     const { status } = await firstValueFrom(
-      this.httpService.patch(`${config.JOORNALO_CDN_API_URL}files/moveimages`, { path, oldImages: oldStory['images'], newImages: story['images'] }, axiosConfig).pipe(
+      this.httpService.patch(`${process.env.JOORNALO_CDN_API_URL}files/moveimages`, { path, oldImages: oldStory['images'], newImages: story['images'] }, axiosConfig).pipe(
         catchError((error) => {
           console.log(error.response.data);
           throw 'An error happened!';
