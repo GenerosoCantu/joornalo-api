@@ -18,8 +18,16 @@ export const FrontSchema = new mongoose.Schema({
     default: 'Pending'
   },
   section: String,
-  cover: String
-  // stories: [String]
+  cover: String,
+  stories: [
+    {
+      slot: Number,
+      id: String,
+      section: String,
+      headline: String,
+      lead: String
+    }
+  ],
 }, {
   versionKey: false
 });
