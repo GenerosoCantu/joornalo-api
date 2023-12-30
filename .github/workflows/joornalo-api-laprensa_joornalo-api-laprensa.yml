@@ -25,6 +25,7 @@ jobs:
         run: |
           npm install
           npm run build --if-present
+          npm run test --if-present
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
@@ -58,4 +59,4 @@ jobs:
           app-name: 'joornalo-api-laprensa'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0AC130214B7C49C28D94BCE9184A4FBF }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_02EE7C3514824B81A3366DAF5A043446 }}
