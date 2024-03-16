@@ -20,6 +20,16 @@ export const createFolders = async (basePath, uuid) => {
   return newPath;
 }
 
+export const createPath = async (basePath, uuid) => {
+  const folders = uuid.substr(0, 3).split('');
+  folders.push(uuid);
+  let currPath = basePath;
+  folders.forEach((folder) => {
+    currPath = currPath + folder + '/';
+  })
+  return currPath;
+}
+
 export const deleteFolders = async (basePath, uuid) => {
   const folders = uuid.substr(0, 3).split('');
   folders.push(uuid);

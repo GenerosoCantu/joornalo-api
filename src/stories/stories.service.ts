@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { HttpService } from '@nestjs/axios'
 import { catchError, firstValueFrom } from 'rxjs';
 import { Story } from './interfaces/stories.interface';
-import { createFolders, deleteFile, writeJsonFile, moveImages, deleteFolders } from '../utils/file-json.utils';
+import { createFolders, deleteFile, writeJsonFile, moveImages, deleteFolders, createPath } from '../utils/file-json.utils';
 // import { CoversModule } from 'src/covers/covers.module';
 
 @Injectable()
@@ -58,7 +58,7 @@ export class StoriesService {
 
   async create(story: Story): Promise<Story> {
     const newStory = new this.storyModel(story);
-    const path = await createFolders('data/story/', newStory['_id'])
+    const path = await createFolders(`data/${process.env.TENANT}/story/`, newStory['_id'])
     if (story.status === 'Active') {
       writeJsonFile(path, 'story', newStory);
     }
@@ -69,8 +69,7 @@ export class StoriesService {
   async update(id: string, story: Story, token: any): Promise<Story> {
     console.log('update----id:', id);
     const oldStory = await this.storyModel.findOne({ _id: id });
-    const path = await createFolders('data/story/', id)
-
+    const path = await createPath('story/', id)
     const axiosConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -81,7 +80,7 @@ export class StoriesService {
     console.log('Headers::::', axiosConfig)
     if (story.status === 'Active') {
       const { status } = await firstValueFrom(
-        this.httpService.patch(`${process.env.JOORNALO_CDN_API_URL}files/json`, { path, fileName: 'story', obj: story }, axiosConfig).pipe(
+        this.httpService.patch(`${process.env.JOORNALO_CDN_API_URL}files/${process.env.TENANT}/json/`, { id, fileName: 'story', obj: story }, axiosConfig).pipe(
           catchError((error) => {
             console.log(error.response.data);
             throw 'An error happened!';
@@ -93,7 +92,7 @@ export class StoriesService {
     } else {
       const axiosConfigData = Object.assign(axiosConfig, { data: { fileName: `${path}story.json` } })
       const { status } = await firstValueFrom(
-        this.httpService.delete(`${process.env.JOORNALO_CDN_API_URL}files`, axiosConfigData).pipe(
+        this.httpService.delete(`${process.env.JOORNALO_CDN_API_URL}files/${process.env.TENANT}/`, axiosConfigData).pipe(
           catchError((error) => {
             console.log(error.response.data);
             throw 'An error happened!';
@@ -105,7 +104,7 @@ export class StoriesService {
     }
 
     const { status } = await firstValueFrom(
-      this.httpService.patch(`${process.env.JOORNALO_CDN_API_URL}files/moveimages`, { path, oldImages: oldStory['images'], newImages: story['images'] }, axiosConfig).pipe(
+      this.httpService.patch(`${process.env.JOORNALO_CDN_API_URL}files/${process.env.TENANT}/moveimages`, { path, oldImages: oldStory['images'], newImages: story['images'] }, axiosConfig).pipe(
         catchError((error) => {
           console.log(error.response.data);
           throw 'An error happened!';
@@ -113,17 +112,17 @@ export class StoriesService {
       )
     );
     console.log('moveImages status:::', status);
-    // moveImages(path, oldStory['images'], story['images']);
+    // // moveImages(path, oldStory['images'], story['images']);
 
     return await this.storyModel.findByIdAndUpdate(id, story, { new: true });
   }
 
   async delete(id: string): Promise<Story> {
     const story = await this.storyModel.findOne({ _id: id });
-    const path = await createFolders('data/story/', id)
+    const path = await createFolders(`data/${process.env.TENANT}/story/`, id)
     await deleteFile(path + 'story.json')
     await moveImages(path, story['images'], []);
-    await deleteFolders('data/story/', id)
+    await deleteFolders(`data/${process.env.TENANT}/story/`, id)
     return await this.storyModel.findByIdAndRemove(id);
   }
 
