@@ -15,8 +15,8 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Joornalo API"', () => {
-      expect(appController.getHello()).toBe('Joornalo API');
+    it('should return "Joornalo API v1.0.0"', () => {
+      expect(appController.getHello()).toBe('Joornalo API v1.0.0');
     });
   });
 });
